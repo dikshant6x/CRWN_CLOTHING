@@ -4,6 +4,8 @@ import {
   signInWithRedirect,
   signInWithPopup,
   GoogleAuthProvider,
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
 } from "firebase/auth"; // Authentication
 
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore"; // getting firebase dB
@@ -20,7 +22,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
-const provider = new GoogleAuthProvider(); // Google Authprovider is class we get from firebase authentication thats why we use new against it, as we may need multipl diferent providers
+const provider = new GoogleAuthProvider(); // Google Authprovider is class we get from firebase authentication thats why we use new against it, as we may need multipl diferent providers github,  google fcaebook etc
 // Whenever someone interacts with our provider like google here will need to select an account to procced
 provider.setCustomParameters({
   prompt: "select_account",
@@ -28,10 +30,16 @@ provider.setCustomParameters({
 
 export const auth = getAuth(); // need to create the instance it's only needed once for whole website
 export const signInWithGooglePopup = () => signInWithPopup(auth, provider);
+export const signInWithGoogleRedirect = () =>
+  signInWithRedirect(auth, provider);
 export const db = getFirestore(); // This directly points to database
 
 // we input access token we get from signin.component.jsx here in this method to access creation of Documents
-export const createUserDocumentFromAuth = async (userAuth) => {
+export const createUserDocumentFromAuth = async (
+  userAuth,
+  additionalInformation = {}
+) => {
+  if (!userAuth) return;
   const userDocRef = doc(db, "users", userAuth.uid);
   console.log(userDocRef);
   const userSnapshot = await getDoc(userDocRef);
@@ -46,10 +54,20 @@ export const createUserDocumentFromAuth = async (userAuth) => {
     const createdAt = new Date();
     // here we use setDoc to create a doc and save our destructured infor. form userAuth
     try {
-      await setDoc(userDocRef, { displayName, email, createdAt }); // pass userdoc ref that we just got above using doc
+      await setDoc(userDocRef, {
+        displayName,
+        email,
+        createdAt,
+        ...additionalInformation, // Spread this object in last it works a s backup incase we dont get dispalyname we hardcode it
+      }); // pass userdoc ref that we just got above using doc
     } catch (error) {
       console.log("Error creating the user", error.message);
     }
   }
   return userDocRef;
+};
+
+export const CreateUserWithEmailAndPassword = async (email, password) => {
+  if (!email || !password) return;
+  return await createUserWithEmailAndPassword(auth, email, password);
 };
