@@ -5,6 +5,7 @@ import {
 } from "../../utils/firebase/firebase.utils";
 import "./sign-up-form.styles.scss";
 import Button from "../button/button.component";
+// import { UserContext } from "../contexts/user.context";
 
 import FormInput from "../form-input/form-input.component";
 const deafultFormFields = {
@@ -17,7 +18,7 @@ const deafultFormFields = {
 const SignUpForm = () => {
   const [formFields, setFormFields] = useState(deafultFormFields); //usetsate func (currect value, fucntion that gets value)=useState(x)
   const { displayName, email, password, confirmPassword } = formFields; // destructuring object
-  console.log(formFields);
+  // const { setCurrentUser } = useContext(UserContext);
 
   const resetformFields = () => {
     setFormFields(deafultFormFields);
@@ -32,6 +33,8 @@ const SignUpForm = () => {
     try {
       const { user } = await CreateUserWithEmailAndPassword(email, password);
       // Here we see that we get diplayName as null as firebase tend to keep auth consistent syntax throughout so it makesures. so display is not coming from userobject it will come from Form
+      // setCurrentUser(user);
+
       await createUserDocumentFromAuth(user, { displayName });
       resetformFields();
     } catch (error) {

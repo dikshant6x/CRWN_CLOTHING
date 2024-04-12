@@ -6,6 +6,8 @@ import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
 } from "firebase/auth"; // Authentication
 
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore"; // getting firebase dB
@@ -77,4 +79,21 @@ export const CreateUserWithEmailAndPassword = async (email, password) => {
 export const SignInAuthUserWithEmailAndPassword = async (email, password) => {
   if (!email || !password) return;
   return await signInWithEmailAndPassword(auth, email, password);
+};
+
+// SIGN OUT METHOD
+// takes auth sigleton to tell signout which user to logout
+
+export const signOutUser = () => {
+  signOut(auth);
+};
+
+// Centralising our code for user context and using onAuthStateChnaged(auth,callback)
+
+// here we direct give parameter callback menas whenever we insatntiate this fucntion, you hav eto give me acllback
+
+// on onAuthStateChnagedListner receives some kind of callbackfunction it passses this callback function as second value of onAuthstatechanged . it calls callback when Authentication state of AUth chnages. use signs in auth change asuser authenticated
+
+export const onAuthStateChangedListener = (callback) => {
+  onAuthStateChanged(auth, callback);
 };

@@ -6,8 +6,10 @@ import {
 } from "../../utils/firebase/firebase.utils";
 import "./sign-in-form.styles.scss";
 import Button from "../button/button.component";
+// import { UserContext } from "../contexts/user.context";
 
 import FormInput from "../form-input/form-input.component";
+
 const deafultFormFields = {
   email: "",
   password: "",
@@ -17,24 +19,22 @@ const SignInForm = () => {
   const [formFields, setFormFields] = useState(deafultFormFields); //usetsate func (currect value, fucntion that gets value)=useState(x)
   const { email, password } = formFields; // destructuring object
 
+  // const { setCurrentUser } = useContext(UserContext); // we get current state value from usercontext to setcurrentuser values
+
   const resetformFields = () => {
     setFormFields(deafultFormFields);
   };
 
   const signInWithGoogle = async () => {
-    const { user } = await signInWithGooglePopup();
-    await createUserDocumentFromAuth(user); // simply cehcing if any existing doc refernec is there on firebase
+    await signInWithGooglePopup(); // simply cehcing if any existing doc refernec is there on firebase await till we get google sign in popup
   };
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
-      const response = await SignInAuthUserWithEmailAndPassword(
-        email,
-        password
-      );
-      console.log(response);
+      await SignInAuthUserWithEmailAndPassword(email, password);
       resetformFields();
+      // setCurrentUser(user); //as there is a login and value chnage so does the user constext values > we get anew ccurrent user value
     } catch (error) {
       switch (error.code) {
         case "auth/wrong-password":
