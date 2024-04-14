@@ -1,0 +1,9 @@
+.products-container {
+  display: grid;
+  grid-template-columns: repeat(
+    4,
+    1fr
+  ); // repeat 4 times 4 equal sizes 1 fr ex 100 /4 25 each
+  column-gap: 10px;
+  row-gap: 50px;
+}
