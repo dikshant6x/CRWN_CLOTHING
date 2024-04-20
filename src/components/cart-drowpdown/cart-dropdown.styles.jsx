@@ -23,7 +23,7 @@ export const CartDropdownContainer = styled.div`
   ${GoogleSignInButton},
   ${InvertedButton} {
     margin-top: auto;
-  } // incase any of three component gets nested inside cart dropdown the apply this cahange to it its presentation for case where
+  }
 `;
 
 export const EmptyMessage = styled.span`
