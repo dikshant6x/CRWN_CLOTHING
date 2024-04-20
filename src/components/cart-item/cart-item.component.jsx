@@ -1,18 +1,18 @@
-import "./cart-item.styles.scss";
+import { CartItemContainer, ItemDetails } from "./cart-item.styles";
 
 // here cartItem is input that is appearing from data stroed withing the json
 const CartItem = ({ cartItem }) => {
   const { name, imageUrl, price, quantity } = cartItem;
   return (
-    <div className="cart-item-container">
+    <CartItemContainer>
       <img src={imageUrl} alt={`${name}`} />
-      <div className="item-details">
-        {<span className="name">{name}</span>}
-        <span className="price">
+      <ItemDetails>
+        <span>{name}</span>
+        <span>
           {quantity} X ${price}
         </span>
-      </div>
-    </div>
+      </ItemDetails>
+    </CartItemContainer>
   );
 };
 

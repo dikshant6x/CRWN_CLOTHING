@@ -10,7 +10,16 @@ import {
   onAuthStateChanged,
 } from "firebase/auth"; // Authentication
 
-import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore"; // getting firebase dB
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  collection,
+  writeBatch,
+  query,
+  getDocs,
+} from "firebase/firestore"; // getting firebase dB
 
 const firebaseConfig = {
   apiKey: "AIzaSyAT0dIduSLSUcmdEMlo3_LfuIfh7fEW9ng",
@@ -35,6 +44,37 @@ export const signInWithGooglePopup = () => signInWithPopup(auth, provider);
 export const signInWithGoogleRedirect = () =>
   signInWithRedirect(auth, provider);
 export const db = getFirestore(); // This directly points to database
+
+export const addCollectionAndDocuments = async (
+  collectionKey,
+  objectsToAdd
+) => {
+  const collectionRef = collection(db, collectionKey); // looking in a collection for a collection key that don't exist will simply make firbase to create one
+  // to show successfull trnasction of increase in no. of docs in collecctionef
+  // use batch to add all ouyr documents to collection in one succesfull transaction
+  const batch = writeBatch(db);
+  objectsToAdd.forEach((object) => {
+    const docRef = doc(collectionRef, object.title.toLowerCase());
+    batch.set(docRef, object); // firebasevwith point us to lcoation for Objecttitel in collectionRef even if doesn't exist
+  });
+
+  await batch.commit();
+  console.log("done");
+};
+
+// extracting products and categories form firestore DB
+export const getCategoriesAndDocuments = async () => {
+  const collectionRef = collection(db, "categories");
+  const q = query(collectionRef); // object we get from query method
+
+  const querySnapshot = await getDocs(q); // asyn ability to fetch documnet snapshot
+  const categoryMap = querySnapshot.docs.reduce((acc, docSnapshot) => {
+    const { title, items } = docSnapshot.data();
+    acc[title.toLowerCase()] = items;
+    return acc;
+  }, {}); //reduce over this array to end up with an object
+  return categoryMap;
+};
 
 // we input access token we get from signin.component.jsx here in this method to access creation of Documents
 export const createUserDocumentFromAuth = async (
