@@ -1,5 +1,11 @@
-import { useContext } from "react";
-import { CartContext } from "../contexts/cart.context";
+import { useDispatch } from "react-redux";
+
+import {
+  clearItemFromCart,
+  addItemToCart,
+  removeItemFromCart,
+} from "../../store/cart/cart.reducer";
+
 import {
   CheckoutItemContainer,
   ImageContainer,
@@ -12,18 +18,12 @@ import {
 
 const CheckoutItem = ({ cartItem }) => {
   const { name, imageUrl, price, quantity } = cartItem;
-  const { clearItemFromCart, addItemToCart, removeItemToCart } =
-    useContext(CartContext);
+  const dispatch = useDispatch();
 
-  const clearItemHandler = () => {
-    clearItemFromCart(cartItem);
-  }; // create a handler her so that we can give inpit for cartitem so that oru onclick eventhnadler works fine
+  const clearItemHandler = () => dispatch(clearItemFromCart(cartItem));
+  const addItemHandler = () => dispatch(addItemToCart(cartItem));
+  const removeItemHandler = () => dispatch(removeItemFromCart(cartItem));
 
-  // helper function to add items to cart via clicking on arrow function
-  const addItemHandler = () => addItemToCart(cartItem);
-
-  // helper function to reduce items to cart via clicking on arrow function
-  const removeItemHandler = () => removeItemToCart(cartItem);
   return (
     <CheckoutItemContainer>
       <ImageContainer>
