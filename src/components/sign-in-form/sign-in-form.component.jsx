@@ -1,47 +1,63 @@
-import { useState } from 'react';
-
-import FormInput from '../form-input/form-input.component';
-import Button, { BUTTON_TYPE_CLASSES } from '../button/button.component';
-
+import { useState } from "react";
 import {
-  signInAuthUserWithEmailAndPassword,
   signInWithGooglePopup,
-} from '../../utils/firebase/firebase.utils';
+  SignInAuthUserWithEmailAndPassword,
+} from "../../utils/firebase/firebase.utils";
+import { SignInContainer, ButtonsContainer } from "./sign-in-form.styles";
+import { useDispatch } from "react-redux";
+import {
+  googleSignInStart,
+  emailSignInStart,
+} from "../../store/user/user.action";
 
-import { SignInContainer, ButtonsContainer } from './sign-in-form.styles';
+import Button, { BUTTON_TYPE_CLASSES } from "../button/button.component";
+// import { UserContext } from "../contexts/user.context";
 
-const defaultFormFields = {
-  email: '',
-  password: '',
-};
+import FormInput from "../form-input/form-input.component";
+
+const deafultFormFields = {
+  email: "",
+  password: "",
+}; // eeting obejct in useState only hwen that object is going to be tied together to some logic and to generalize the handle change func that will help on updating the data as its changes in form field update it as there is change in use state
 
 const SignInForm = () => {
-  const [formFields, setFormFields] = useState(defaultFormFields);
-  const { email, password } = formFields;
+  const dispatch = useDispatch();
+  const [formFields, setFormFields] = useState(deafultFormFields); //usetsate func (currect value, fucntion that gets value)=useState(x)
+  const { email, password } = formFields; // destructuring object
 
-  const resetFormFields = () => {
-    setFormFields(defaultFormFields);
+  // const { setCurrentUser } = useContext(UserContext); // we get current state value from usercontext to setcurrentuser values
+
+  const resetformFields = () => {
+    setFormFields(deafultFormFields);
   };
 
   const signInWithGoogle = async () => {
-    await signInWithGooglePopup();
+    dispatch(googleSignInStart());
   };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
-      await signInAuthUserWithEmailAndPassword(email, password);
-      resetFormFields();
+      dispatch(emailSignInStart(email, password));
+      resetformFields();
+      // setCurrentUser(user); //as there is a login and value chnage so does the user constext values > we get anew ccurrent user value
     } catch (error) {
-      console.log('user sign in failed', error);
+      switch (error.code) {
+        case "auth/wrong-password":
+          alert("incorrect password for email");
+          break;
+        case "auth/user-not-found":
+          alert("no user associated with this email");
+          break;
+        default:
+          console.log(error);
+      }
     }
   };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-
-    setFormFields({ ...formFields, [name]: value });
+    setFormFields({ ...formFields, [name]: value }); // spread in the object and modify one value in this object
   };
 
   return (
@@ -50,27 +66,27 @@ const SignInForm = () => {
       <span>Sign in with your email and password</span>
       <form onSubmit={handleSubmit}>
         <FormInput
-          label='Email'
-          type='email'
+          label="Email"
+          type="email"
           required
           onChange={handleChange}
-          name='email'
+          name="email"
           value={email}
         />
 
         <FormInput
-          label='Password'
-          type='password'
+          label="Password"
+          type="password"
           required
           onChange={handleChange}
-          name='password'
+          name="password"
           value={password}
         />
         <ButtonsContainer>
-          <Button type='submit'>Sign In</Button>
+          <Button type="submit">Sign In</Button>
           <Button
             buttonType={BUTTON_TYPE_CLASSES.google}
-            type='button'
+            type="button"
             onClick={signInWithGoogle}
           >
             Sign In With Google
