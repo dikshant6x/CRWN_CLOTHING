@@ -1,5 +1,4 @@
-import { combineReducers } from "redux";
-// combine multiple reducers to a single root reducer
+import { combineReducers } from "@reduxjs/toolkit";
 
 import { userReducer } from "./user/user.reducer";
 import { categoriesReducer } from "./categories/category.reducer";

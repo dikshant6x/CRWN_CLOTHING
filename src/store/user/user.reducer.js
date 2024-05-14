@@ -1,26 +1,23 @@
-import { USER_ACTION_TYPES } from "./user.types";
-
+// import { setCurrentUser } from "./user.action";
+// import { USER_ACTION_TYPES } from "./user.types";
+import { createSlice } from "@reduxjs/toolkit"; // takes place of reducer werite
 const INITIAL_STATE = {
   currentUser: null,
-  isLoading: false,
-  error: null,
+  test: [1, 2, 3],
 };
 
-export const userReducer = (state = INITIAL_STATE, action) => {
-  // console.log("dispatched");
-  // console.log(action);
-  const { type, payload } = action;
+export const userSlice = createSlice({
+  name: "user",
+  initialState: INITIAL_STATE,
+  reducers: {
+    setCurrentUser(state, action) {
+      state.currentUser = action.payload;
+    },
+  },
+});
 
-  switch (type) {
-    case USER_ACTION_TYPES.SIGN_IN_SUCCESS:
-      return { ...state, currentUser: payload };
-    case USER_ACTION_TYPES.SIGN_OUT_SUCCESS:
-      return { ...state, currentUser: null };
-    case USER_ACTION_TYPES.SIGN_OUT_FAILED:
-    case USER_ACTION_TYPES.SIGN_UP_FAILED:
-    case USER_ACTION_TYPES.SIGN_IN_FAILED:
-      return { ...state, error: payload };
-    default:
-      return state;
-  }
-};
+export const { setCurrentUser } = userSlice.actions; // property that has all actions we wrote in reducer above
+
+export const userReducer = userSlice.reducer; // gets us actual reducer function
+
+// HERE WE SEE createSlice has replaced our reducer for user ; actions for user ; and types for user all here in one than 3 scripts
